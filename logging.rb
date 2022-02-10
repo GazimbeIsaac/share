@@ -1,7 +1,7 @@
-#!/usr/bin/ruby
+#!/usr/bin/ruby -w
 #
 #   Author: Rohith
-#   Date: 2013-04-24 13:57:18 +0100 (Wed, 24 Apr 2013)
+#   Date: 2013-08-13 10:10:32 +0100 (Tue, 13 Aug 2013)
 #  $LastChangedBy$
 #  $LastChangedDate$
 #  $Revision$
@@ -10,87 +10,41 @@
 #
 #  vim:ts=4:sw=4:et
 
-class Level 
+module Logging
 
-	@level = 0
-	@timestamped = false
+    def verbose
+        @verbose = false
+    end
 
-	def set_level( level )
-		@level = level
-	end
+    def log( level, message )
+        puts "%-5s %s" % [ "[#{level}]:", message ] if message
+    end
+    
+    def verb( message )
+        log "verb", message if @verbose
+    end
 
-	def get_level
-		return @level
-	end
+    def info( message )
+        log "info", message
+    end
 
-	def set_timestamp( flag )
-		@timestamped = flag
-	end
+    def warn( message) 
+        log "warn", message
+    end
 
-	def is_stamp
-		return @timestamped
-	end
+    def error( message )
+        log "error", message
+    end
 
-end
+    def usage( message ) 
 
-# description: a generic module used for logging 
-module Log
+        puts "\n%s\n" % [ Parser ] 
+        if message
+            puts "error: %s\n" % [ message ]
+            exit 1
+        end
+        exit 0
 
-	@level   = Level::new
-	@levels  = {
-		"die"   => 0,
-		"info"	=> 1,
-		"warn"  => 2,
-		"error" => 3,
-		"debug" => 4,
- 	}
-	
-	def Log.log( level, msg )
-		tm = ""
-		if @level.is_stamp
-			time = Time.new
-			tm   = time.strftime("%H:%M:%S")
-		end 
-		printf " %-7s %s : %s\n" % [ "[#{level}]", tm, msg ] if  @levels[level] <= @level.get_level
-	end
-
-	def Log.die( msg )
-		log( "die", msg )
-		exit 1
-	end
-
-	def Log.warn( msg )
-		log( "warn", msg )
-	end
-
-	def Log.info( msg )
-		log( "info", msg )
-	end
-
-	def Log.error( msg )
-		log( "error", msg )
-	end
-
-	def Log.debug( msg )
-		log( "debug", msg )
-	end
-
-	def Log.set_level( level )
-		if @levels.has_key?( level ) 
-			@level.set_level( @levels[ level ] )
-		end
-	end
-
-	def Log.get_levels
-		@levels.keys.join( ',' )
-	end
-
-	def Log.stamp( flag )
-		@level.set_timestamp( flag )
-	end
-
-	def get_level
-		return @level.get_level		
-	end
+    end
 
 end
